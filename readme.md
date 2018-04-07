@@ -1,0 +1,3 @@
+# statetransition
+
+状態遷移をDBで管理するオープンソースライブラリ

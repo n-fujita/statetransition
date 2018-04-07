@@ -1,5 +1,6 @@
 package jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent
 
+import jp.co.biglobe.isp.oss.statetransition.datasource.DbSpecCommon
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventId
 import jp.co.biglobe.isp.oss.statetransition.datasource.db.TestTableSetupMapper
 import jp.co.biglobe.isp.oss.statetransition.domain.StateEventDateTime
@@ -15,22 +16,9 @@ import java.time.LocalDateTime
 
 @SpringBootTest
 @TestConfiguration
-class StateEventTableRepositoryImplSpec extends Specification {
+class StateEventTableRepositoryImplSpec extends DbSpecCommon {
     @Autowired
     StateEventTableRepository sut
-
-    @Value("\${statetransition.table.state_event_table_name:#{null}}") Optional<String> stateEventTableName
-
-    @Autowired
-    TestTableSetupMapper testTableSetupMapper
-
-    def setup() {
-        testTableSetupMapper.createStateTable(stateEventTableName.get())
-    }
-
-    def cleanup() {
-        testTableSetupMapper.dropTable(stateEventTableName.get())
-    }
 
     def "insertAndFind"() {
         when:

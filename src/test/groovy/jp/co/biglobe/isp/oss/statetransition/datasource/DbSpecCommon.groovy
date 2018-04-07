@@ -20,8 +20,8 @@ class DbSpecCommon extends Specification {
     TestTableSetupMapper testTableSetupMapper
 
     def setup() {
-        [stateTableName, stateEventTableName].forEach({testTableSetupMapper.createStateTable(it.get())})
-
+        testTableSetupMapper.createStateTable(stateTableName.get())
+        testTableSetupMapper.createStateEventTable(stateEventTableName.get())
     }
 
     def cleanup() {

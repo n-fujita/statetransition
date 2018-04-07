@@ -6,6 +6,8 @@ import jp.co.biglobe.isp.oss.statetransition.domain.StateEventDateTime;
 import jp.co.biglobe.isp.oss.statetransition.domain.StateType;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+
 
 public class StateEventAdapter {
     public String id;
@@ -14,6 +16,7 @@ public class StateEventAdapter {
     public String state_event_id;
     public LocalDateTime state_event_date_time;
     public LocalDateTime event_date_time;
+    public Integer is_latest;
 
     public StateEvent toEntity(StateType stateType) {
         if(!stateType.getValue().equals(state_type)) {
@@ -25,7 +28,12 @@ public class StateEventAdapter {
                 stateType.convert(state),
                 stateType,
                 new StateEventDateTime(state_event_date_time),
-                event_date_time
+                event_date_time,
+                isLatest()
         );
+    }
+
+    public boolean isLatest() {
+        return Optional.ofNullable(is_latest).map(v -> v > 0).orElse(false);
     }
 }

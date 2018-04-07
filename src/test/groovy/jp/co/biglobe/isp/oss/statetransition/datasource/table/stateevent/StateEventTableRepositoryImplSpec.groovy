@@ -1,16 +1,14 @@
 package jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent
 
 import jp.co.biglobe.isp.oss.statetransition.datasource.DbSpecCommon
+import jp.co.biglobe.isp.oss.statetransition.datasource.StateEvent
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventId
-import jp.co.biglobe.isp.oss.statetransition.datasource.db.TestTableSetupMapper
 import jp.co.biglobe.isp.oss.statetransition.domain.StateEventDateTime
 import jp.co.biglobe.isp.oss.statetransition.sample.SampleStateType
 import jp.co.biglobe.isp.oss.statetransition.sample.contract.ContractState
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
-import spock.lang.Specification
 
 import java.time.LocalDateTime
 
@@ -37,12 +35,17 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
 
         then:
         act.size() == 1
-        act[0].id == "ID001"
-        act[0].eventId.value == "EVENT001"
-        act[0].state == ContractState.ordered
-        act[0].stateType == SampleStateType.contract
-        act[0].stateEventDateTime.value == LocalDateTime.of(2017, 12, 30, 0, 0)
-        act[0].eventDateTime == LocalDateTime.of(2018, 1, 1, 0, 0)
+        act == [
+                new StateEvent(
+                    new StateEventId("EVENT001"),
+                    "ID001",
+                    ContractState.ordered,
+                    SampleStateType.contract,
+                    new StateEventDateTime(LocalDateTime.of(2017, 12, 30, 0, 0)),
+                    LocalDateTime.of(2018, 1, 1, 0, 0),
+                    false
+                )
+        ]
     }
 
     def "insert2AndFind"() {
@@ -70,20 +73,26 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
         def act = sut.findAllEvent(new FindLatestContainer("ID001", SampleStateType.contract))
 
         then:
-        act.size() == 2
-        act[0].id == "ID001"
-        act[0].eventId.value == "EVENT001"
-        act[0].state == ContractState.ordered
-        act[0].stateType == SampleStateType.contract
-        act[0].stateEventDateTime.value == LocalDateTime.of(2017, 12, 30, 0, 0)
-        act[0].eventDateTime == LocalDateTime.of(2018, 1, 1, 0, 0)
-
-        act[1].id == "ID001"
-        act[1].eventId.value == "EVENT002"
-        act[1].state == ContractState.contracted
-        act[1].stateType == SampleStateType.contract
-        act[1].stateEventDateTime.value == LocalDateTime.of(2018, 2, 1, 0, 0)
-        act[1].eventDateTime == LocalDateTime.of(2018, 3, 1, 0, 0)
+        act == [
+                new StateEvent(
+                        new StateEventId("EVENT001"),
+                        "ID001",
+                        ContractState.ordered,
+                        SampleStateType.contract,
+                        new StateEventDateTime(LocalDateTime.of(2017, 12, 30, 0, 0)),
+                        LocalDateTime.of(2018, 1, 1, 0, 0),
+                        false
+                ),
+                new StateEvent(
+                        new StateEventId("EVENT002"),
+                        "ID001",
+                        ContractState.contracted,
+                        SampleStateType.contract,
+                        new StateEventDateTime(LocalDateTime.of(2018, 2, 1, 0, 0)),
+                        LocalDateTime.of(2018, 3, 1, 0, 0),
+                        false
+                )
+        ]
     }
 
     def "checkTableName"() {

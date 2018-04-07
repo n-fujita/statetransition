@@ -18,6 +18,12 @@ public interface StateEventMapper {
             @Param("c") InsertStateEventContainer c
     );
 
+    @Select("SELECT * FROM ${tableName} WHERE id = #{c.id} AND state_type = #{c.stateType.value} AND is_latest = 1")
+    StateEventAdapter findLatest(
+            @Param("tableName") String tableName,
+            @Param("c") FindLatestContainer c
+    );
+
     @Select("SELECT * FROM ${tableName} WHERE id = #{c.id} AND state_type = #{c.stateType.value} ORDER BY state_event_id")
     List<StateEventAdapter> findAllEvent(
             @Param("tableName") String tableName,
@@ -26,6 +32,18 @@ public interface StateEventMapper {
 
     @Update("DELETE FROM ${tableName} WHERE state_event_id = #{eventId.value}")
     void delete(
+            @Param("tableName") String tableName,
+            @Param("eventId") StateEventId eventId
+    );
+
+    @Update("UPDATE ${tableName} SET is_latest = 1 WHERE state_event_id = #{eventId.value}")
+    void setIsLatest(
+            @Param("tableName") String tableName,
+            @Param("eventId") StateEventId eventId
+    );
+
+    @Update("UPDATE ${tableName} SET is_latest = null WHERE state_event_id = #{eventId.value}")
+    void removeIsLatest(
             @Param("tableName") String tableName,
             @Param("eventId") StateEventId eventId
     );

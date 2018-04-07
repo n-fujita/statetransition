@@ -16,7 +16,7 @@ public class StateTransition<T extends State> {
     }
 
     public boolean isValidTransition(State current, State next) {
-        if(!current.getClass().getName().equals(next)) {
+        if(!current.getClass().getName().equals(next.getClass().getName())) {
             throw new IllegalArgumentException("state not matched");
         }
         return map.get(current).stream().anyMatch(next::equals);

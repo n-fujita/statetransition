@@ -36,6 +36,12 @@ public class StateEventTableRepositoryImpl implements StateEventTableRepository 
         );
     }
 
+    @Override
+    public Optional<StateEvent> find(FindLatestContainer container) {
+        return Optional.ofNullable(stateEventMapper.findLatest(getStateEventTableName(), container))
+                .map(v -> v.toEntity(container.getStateType()));
+    }
+
     public List<StateEvent> findAllEvent(
             FindLatestContainer container
     ) {
@@ -45,6 +51,28 @@ public class StateEventTableRepositoryImpl implements StateEventTableRepository 
         ).stream()
                 .map(v -> v.toEntity(container.getStateType()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void refreshLatest(
+            FindLatestContainer container
+    ) {
+        List<StateEvent> list = findAllEvent(container);
+        if(list.size() == 0) {
+            return;
+        }
+        StateEvent latest = list.remove(list.size() - 1); // 最後の要素を取得、listから最後の要素を削除
+
+        // 最新にisLatestフラグを入れる
+        stateEventMapper.setIsLatest(
+                getStateEventTableName(),
+                latest.getEventId()
+        );
+
+        // isLatestフラグを落とす
+        list.stream()
+                .filter(StateEvent::isLatest)
+                .forEach(e -> stateEventMapper.removeIsLatest(getStateEventTableName(), e.getEventId()));
     }
 
     public void delete(

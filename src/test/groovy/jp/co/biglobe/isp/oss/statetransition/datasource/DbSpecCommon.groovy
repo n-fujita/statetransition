@@ -11,8 +11,8 @@ import spock.lang.Specification
 @SpringBootTest
 @TestConfiguration
 class DbSpecCommon extends Specification {
-    @Value("\${statetransition.table.state_event_table_name:#{null}}")
-    Optional<String> stateEventTableName
+    @Autowired
+    StateEventTableNameFactory stateEventTableNameFactory
 
     @Value("\${spring.datasource.url:#{null}}")
     Optional<String> datasource
@@ -28,19 +28,11 @@ class DbSpecCommon extends Specification {
     }
 
     def setup() {
-//        File dbFile = getDbFile()
-//        if(dbFile.exists()) {
-//            dbFile.delete()
-//        }
-        testTableSetupMapper.createStateEventTable(stateEventTableName.get())
+        testTableSetupMapper.createStateEventTable(stateEventTableNameFactory.createStateEventTableName(null))
         testTableSetupMapper.createEventIdTable(EventIdCreateMapper.tableName)
     }
 
     def cleanup() {
-//        def dbFile = getDbFile()
-//        if(dbFile.exists()) {
-//            dbFile.delete()
-//        }
-        [stateEventTableName.get(), EventIdCreateMapper.tableName].forEach({ testTableSetupMapper.dropTable(it) })
+        [stateEventTableNameFactory.createStateEventTableName(null), EventIdCreateMapper.tableName].forEach({ testTableSetupMapper.dropTable(it) })
     }
 }

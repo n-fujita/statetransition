@@ -94,9 +94,4 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
                 )
         ]
     }
-
-    def "checkTableName"() {
-        expect:
-        stateEventTableName == Optional.of("state_event")
-    }
 }

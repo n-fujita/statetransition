@@ -11,5 +11,5 @@ import jp.co.biglobe.isp.oss.statetransition.domain.StateType;
  *
  */
 public interface StateEventIdFactory {
-    StateEventId createId(StateType stateType);
+    StateEventId createStateEventId(StateType stateType);
 }

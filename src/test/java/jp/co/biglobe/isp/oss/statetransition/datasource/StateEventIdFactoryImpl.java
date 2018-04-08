@@ -11,7 +11,7 @@ public class StateEventIdFactoryImpl implements StateEventIdFactory {
     EventIdCreateMapper eventIdCreateMapper;
 
     @Override
-    public StateEventId createId(StateType stateType) {
+    public StateEventId createStateEventId(StateType stateType) {
         eventIdCreateMapper.increment();
         return new StateEventId(String.format("STT%09d%s", eventIdCreateMapper.getMaxEventId(), stateType.getValue().toUpperCase()));
 //        return new StateEventId(String.format("STT%09d%s", eventIdCreateMapper.getMaxEventId(), stateType.getValue().toUpperCase()));

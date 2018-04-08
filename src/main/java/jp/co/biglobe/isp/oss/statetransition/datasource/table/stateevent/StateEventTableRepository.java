@@ -2,6 +2,7 @@ package jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent;
 
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEvent;
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventId;
+import jp.co.biglobe.isp.oss.statetransition.domain.StateType;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +23,7 @@ public interface StateEventTableRepository {
             FindLatestContainer container
     );
 
-    void delete(StateEventId stateEventId);
+    void delete(StateEventId stateEventId, StateType stateType);
 
     void refreshLatest(FindLatestContainer container);
 }

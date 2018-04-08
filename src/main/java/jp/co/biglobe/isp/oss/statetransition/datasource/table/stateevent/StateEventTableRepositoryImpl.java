@@ -2,7 +2,10 @@ package jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent;
 
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEvent;
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventId;
+import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventTableNameFactory;
 import jp.co.biglobe.isp.oss.statetransition.datasource.db.StateEventMapper;
+import jp.co.biglobe.isp.oss.statetransition.domain.StateType;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -11,34 +14,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 @Component
 public class StateEventTableRepositoryImpl implements StateEventTableRepository {
     private final StateEventMapper stateEventMapper;
-    private final Optional<String> stateEventTable;
-
-    public StateEventTableRepositoryImpl(
-            @Autowired StateEventMapper stateEventMapper, @Value("${statetransition.table.state_event_table_name:#{null}}") Optional<String> stateEventTable
-    ) {
-        this.stateEventMapper = stateEventMapper;
-        this.stateEventTable = stateEventTable;
-    }
-
-    private String getStateEventTableName() {
-        return stateEventTable.orElseThrow(() -> new RuntimeException("StateEventTableがありません。state_event_table_nameを設定してください"));
-    }
+    private final StateEventTableNameFactory stateEventTableNameFactory;
 
     public void insertStateEvent(
             InsertStateEventContainer insertStateEventContainer
     ) {
         stateEventMapper.insertStateEvent(
-                getStateEventTableName(),
+                stateEventTableNameFactory.createStateEventTableName(insertStateEventContainer.getStateType()),
                 insertStateEventContainer
         );
     }
 
     @Override
     public Optional<StateEvent> find(FindLatestContainer container) {
-        return Optional.ofNullable(stateEventMapper.findLatest(getStateEventTableName(), container))
+        return Optional.ofNullable(stateEventMapper.findLatest(stateEventTableNameFactory.createStateEventTableName(container.getStateType()), container))
                 .map(v -> v.toEntity(container.getStateType()));
     }
 
@@ -46,7 +39,7 @@ public class StateEventTableRepositoryImpl implements StateEventTableRepository 
             FindLatestContainer container
     ) {
         return stateEventMapper.findAllEvent(
-                getStateEventTableName(),
+                stateEventTableNameFactory.createStateEventTableName(container.getStateType()),
                 container
         ).stream()
                 .map(v -> v.toEntity(container.getStateType()))
@@ -65,21 +58,22 @@ public class StateEventTableRepositoryImpl implements StateEventTableRepository 
 
         // 最新にisLatestフラグを入れる
         stateEventMapper.setIsLatest(
-                getStateEventTableName(),
+                stateEventTableNameFactory.createStateEventTableName(container.getStateType()),
                 latest.getEventId()
         );
 
         // isLatestフラグを落とす
         list.stream()
                 .filter(StateEvent::isLatest)
-                .forEach(e -> stateEventMapper.removeIsLatest(getStateEventTableName(), e.getEventId()));
+                .forEach(e -> stateEventMapper.removeIsLatest(stateEventTableNameFactory.createStateEventTableName(container.getStateType()), e.getEventId()));
     }
 
     public void delete(
-            StateEventId stateEventId
+            StateEventId stateEventId,
+            StateType stateType
     ) {
         stateEventMapper.delete(
-                getStateEventTableName(),
+                stateEventTableNameFactory.createStateEventTableName(stateType),
                 stateEventId
         );
     }

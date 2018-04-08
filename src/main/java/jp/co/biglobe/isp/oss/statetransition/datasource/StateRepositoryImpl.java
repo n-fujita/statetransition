@@ -39,7 +39,7 @@ public class StateRepositoryImpl implements StateRepository {
     }
 
     void insertEvent(String id, StateType stateType, State state, StateEventDateTime stateEventDateTime, LocalDateTime now) {
-        StateEventId eventId = stateEventIdFactory.createId(stateType);
+        StateEventId eventId = stateEventIdFactory.createStateEventId(stateType);
         // insert to event table
         stateEventTableRepository.insertStateEvent(
                 new InsertStateEventContainer(
@@ -77,7 +77,7 @@ public class StateRepositoryImpl implements StateRepository {
         }
 
         // delete event
-        stateEventTableRepository.delete(stateEventId);
+        stateEventTableRepository.delete(stateEventId, stateType);
 
         // update state table
         applyStateFromLatestEvent(id, stateType, now);

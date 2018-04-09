@@ -21,8 +21,8 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
 
     def "挿入したイベントが取れること"() {
         setup:
-        def 申込Container = 申込("EVENT001").build()
-        def 申込Event = 申込("EVENT001").buildToStateEvent(false)
+        def 申込Container = 申込().build()
+        def 申込Event = 申込().buildToStateEvent(false)
 
         when:
         sut.insertStateEvent(申込Container)
@@ -36,11 +36,11 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
 
     def "複数挿入した場合、StateEventId順に取得できること"() {
         setup:
-        def 申込Container = 申込("EVENT001").build()
-        def 契約Container = 契約("EVENT002").stateEventDateTime(2018, 2, 1).eventDateTime(2018, 3, 1).build()
+        def 申込Container = 申込().build()
+        def 契約Container = 契約().stateEventDateTime(2018, 2, 1).eventDateTime(2018, 3, 1).build()
 
-        def 申込Event = 申込("EVENT001").buildToStateEvent(false)
-        def 契約Event = 契約("EVENT002").stateEventDateTime(2018, 2, 1).eventDateTime(2018, 3, 1).buildToStateEvent(false)
+        def 申込Event = 申込().buildToStateEvent(false)
+        def 契約Event = 契約().stateEventDateTime(2018, 2, 1).eventDateTime(2018, 3, 1).buildToStateEvent(false)
 
         when:
         sut.insertStateEvent(契約Container)
@@ -59,8 +59,8 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
 
     def "不整合チェック"() {
         setup:
-        def 申込Container = 申込("EVENT001").build()
-        def 契約Container = 契約("EVENT002").stateEventDateTime(2018, 2, 1).eventDateTime(2018, 3, 1).build()
+        def 申込Container = 申込().build()
+        def 契約Container = 契約().stateEventDateTime(2018, 2, 1).eventDateTime(2018, 3, 1).build()
 
         when:
         sut.insertStateEvent(契約Container)

@@ -2,6 +2,7 @@ package jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent;
 
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEvent;
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventId;
+import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventList;
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventTableNameFactory;
 import jp.co.biglobe.isp.oss.statetransition.datasource.db.StateEventMapper;
 import jp.co.biglobe.isp.oss.statetransition.domain.StateType;
@@ -35,37 +36,40 @@ public class StateEventTableRepositoryImpl implements StateEventTableRepository 
                 .map(v -> v.toEntity(container.getStateType()));
     }
 
-    public List<StateEvent> findAllEvent(
+    public StateEventList findAllEvent(
             FindLatestContainer container
     ) {
-        return stateEventMapper.findAllEvent(
-                stateEventTableNameFactory.createStateEventTableName(container.getStateType()),
-                container
-        ).stream()
-                .map(v -> v.toEntity(container.getStateType()))
-                .collect(Collectors.toList());
+        return new StateEventList(
+                stateEventMapper.findAllEvent(
+                        stateEventTableNameFactory.createStateEventTableName(container.getStateType()),
+                        container
+                ).stream()
+                        .map(v -> v.toEntity(container.getStateType()))
+                        .collect(Collectors.toList())
+        );
     }
 
     @Override
     public void refreshLatest(
             FindLatestContainer container
     ) {
-        List<StateEvent> list = findAllEvent(container);
-        if(list.size() == 0) {
+        StateEventList list = findAllEvent(container);
+        if(list.isEmpty()) {
             return;
         }
-        StateEvent latest = list.remove(list.size() - 1); // 最後の要素を取得、listから最後の要素を削除
 
         // 最新にisLatestフラグを入れる
         stateEventMapper.setIsLatest(
                 stateEventTableNameFactory.createStateEventTableName(container.getStateType()),
-                latest.getEventId()
+                list.getLatest().getEventId()
         );
 
         // isLatestフラグを落とす
-        list.stream()
+        list.getNotLatestList().stream()
                 .filter(StateEvent::isLatest)
                 .forEach(e -> stateEventMapper.removeIsLatest(stateEventTableNameFactory.createStateEventTableName(container.getStateType()), e.getEventId()));
+
+        validate(container);
     }
 
     public void delete(
@@ -76,5 +80,11 @@ public class StateEventTableRepositoryImpl implements StateEventTableRepository 
                 stateEventTableNameFactory.createStateEventTableName(stateType),
                 stateEventId
         );
+    }
+
+    public void validate(FindLatestContainer container) {
+        findAllEvent(container).validate().ifPresent(v -> {
+            throw v;
+        });
     }
 }

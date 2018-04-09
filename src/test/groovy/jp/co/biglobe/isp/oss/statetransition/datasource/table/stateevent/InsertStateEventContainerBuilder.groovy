@@ -87,7 +87,11 @@ class InsertStateEventContainerBuilder {
         return new InsertStateEventContainerBuilder().eventId(new StateEventId(eventId)).state(ContractState.ordered)
     }
 
-    static InsertStateEventContainerBuilder 契約(String eventId = "EVENT001") {
+    static InsertStateEventContainerBuilder 契約(String eventId = "EVENT002") {
         return new InsertStateEventContainerBuilder().eventId(new StateEventId(eventId)).state(ContractState.contracted)
+    }
+
+    static InsertStateEventContainerBuilder 解約(String eventId = "EVENT003") {
+        return new InsertStateEventContainerBuilder().eventId(new StateEventId(eventId)).state(ContractState.end)
     }
 }

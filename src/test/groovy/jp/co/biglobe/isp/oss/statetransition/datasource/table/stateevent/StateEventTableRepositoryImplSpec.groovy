@@ -28,7 +28,7 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
         sut.insertStateEvent(申込Container)
 
         // 挿入したものが取れること
-        def act = sut.findAllEvent(new FindLatestContainer("ID001", SampleStateType.contract))
+        def act = sut.findAllEvent(new FindContainer("ID001", SampleStateType.contract))
 
         then:
         act == new StateEventList([申込Event])
@@ -48,7 +48,7 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
 
 
         // 挿入したものが取れること
-        def act = sut.findAllEvent(new FindLatestContainer("ID001", SampleStateType.contract))
+        def act = sut.findAllEvent(new FindContainer("ID001", SampleStateType.contract))
 
         then:
         act == new StateEventList([
@@ -65,7 +65,7 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
         when:
         sut.insertStateEvent(契約Container)
         sut.insertStateEvent(申込Container)
-        sut.validate(new FindLatestContainer("ID001", SampleStateType.contract))
+        sut.validate(new FindContainer("ID001", SampleStateType.contract))
 
         then:
         thrown(ListLatestIsNotLastException)
@@ -74,14 +74,14 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
 
     def "refreshLatest"() {
         setup:
-        def find = new FindLatestContainer("ID001", SampleStateType.contract)
+        def find = new FindContainer("ID001", SampleStateType.contract)
 
         // 初期状態
         def 申込Container = 申込().build()
         def 契約Container = 契約().stateEventDateTime(2018, 2, 1).eventDateTime(2018, 3, 1).build()
         sut.insertStateEvent(契約Container)
         sut.insertStateEvent(申込Container)
-        sut.refreshLatest(new FindLatestContainer("ID001", SampleStateType.contract))
+        sut.refreshLatest(new FindContainer("ID001", SampleStateType.contract))
         sut.validate(find)
         assert sut.find(find).get().state == ContractState.contracted
 
@@ -91,7 +91,7 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
 
         when:
         // リフレッシュする
-        sut.refreshLatest(new FindLatestContainer("ID001", SampleStateType.contract))
+        sut.refreshLatest(new FindContainer("ID001", SampleStateType.contract))
 
         then:
         notThrown(RuntimeException)

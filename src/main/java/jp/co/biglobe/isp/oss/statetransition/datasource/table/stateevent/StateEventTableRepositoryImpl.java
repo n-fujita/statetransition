@@ -8,10 +8,8 @@ import jp.co.biglobe.isp.oss.statetransition.datasource.db.StateEventMapper;
 import jp.co.biglobe.isp.oss.statetransition.domain.StateType;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,13 +29,13 @@ public class StateEventTableRepositoryImpl implements StateEventTableRepository 
     }
 
     @Override
-    public Optional<StateEvent> find(FindLatestContainer container) {
+    public Optional<StateEvent> find(FindContainer container) {
         return Optional.ofNullable(stateEventMapper.findLatest(stateEventTableNameFactory.createStateEventTableName(container.getStateType()), container))
                 .map(v -> v.toEntity(container.getStateType()));
     }
 
     public StateEventList findAllEvent(
-            FindLatestContainer container
+            FindContainer container
     ) {
         return new StateEventList(
                 stateEventMapper.findAllEvent(
@@ -51,7 +49,7 @@ public class StateEventTableRepositoryImpl implements StateEventTableRepository 
 
     @Override
     public void refreshLatest(
-            FindLatestContainer container
+            FindContainer container
     ) {
         StateEventList list = findAllEvent(container);
         if(list.isEmpty()) {
@@ -82,7 +80,7 @@ public class StateEventTableRepositoryImpl implements StateEventTableRepository 
         );
     }
 
-    public void validate(FindLatestContainer container) {
+    public void validate(FindContainer container) {
         findAllEvent(container).validate().ifPresent(v -> {
             throw v;
         });

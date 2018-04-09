@@ -2,7 +2,7 @@ package jp.co.biglobe.isp.oss.statetransition.datasource.db;
 
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventId;
 import jp.co.biglobe.isp.oss.statetransition.datasource.table.StateEventAdapter;
-import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.FindLatestContainer;
+import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.FindContainer;
 import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.InsertStateEventContainer;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
@@ -21,13 +21,13 @@ public interface StateEventMapper {
     @Select("SELECT * FROM ${tableName} WHERE id = #{c.id} AND state_type = #{c.stateType.value} AND is_latest = 1")
     StateEventAdapter findLatest(
             @Param("tableName") String tableName,
-            @Param("c") FindLatestContainer c
+            @Param("c") FindContainer c
     );
 
     @Select("SELECT * FROM ${tableName} WHERE id = #{c.id} AND state_type = #{c.stateType.value} ORDER BY state_event_id")
     List<StateEventAdapter> findAllEvent(
             @Param("tableName") String tableName,
-            @Param("c") FindLatestContainer c
+            @Param("c") FindContainer c
     );
 
     @Update("DELETE FROM ${tableName} WHERE state_event_id = #{eventId.value}")

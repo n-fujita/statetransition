@@ -1,7 +1,7 @@
 package jp.co.biglobe.isp.oss.statetransition.datasource;
 
 import jp.co.biglobe.isp.oss.statetransition.domain.*;
-import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.FindLatestContainer;
+import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.FindContainer;
 import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.InsertStateEventContainer;
 import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.StateEventTableRepository;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ public class StateRepositoryImpl implements StateRepository {
     ) {
 
         Optional<StateAndStateEventDateTime> latest = stateEventTableRepository
-                .find(new FindLatestContainer(id, stateType))
+                .find(new FindContainer(id, stateType))
                 .map(StateEvent::toStateAndStateEventDateTime);
 
         StateChangeLogic.validate(
@@ -62,16 +62,16 @@ public class StateRepositoryImpl implements StateRepository {
      * @param now
      */
     void applyStateFromLatestEvent(String id, StateType stateType, LocalDateTime now) {
-        stateEventTableRepository.refreshLatest(new FindLatestContainer(id, stateType));
+        stateEventTableRepository.refreshLatest(new FindContainer(id, stateType));
     }
 
     @Override
     public Optional<StateEvent> findLatest(String id, StateType stateType) {
-        return stateEventTableRepository.find(new FindLatestContainer(id, stateType));
+        return stateEventTableRepository.find(new FindContainer(id, stateType));
     }
 
     public void delete(StateEventId stateEventId, String id, StateType stateType, LocalDateTime now) {
-        StateEvent latest = stateEventTableRepository.find(new FindLatestContainer(id, stateType)).orElseThrow(() -> new RuntimeException("stateEventIdが見つからない: " + stateEventId.getValue()));
+        StateEvent latest = stateEventTableRepository.find(new FindContainer(id, stateType)).orElseThrow(() -> new RuntimeException("stateEventIdが見つからない: " + stateEventId.getValue()));
         if(!latest.getEventId().getValue().equals(stateEventId.getValue())) {
             throw new RuntimeException("最新のイベント以外削除できません");
         }

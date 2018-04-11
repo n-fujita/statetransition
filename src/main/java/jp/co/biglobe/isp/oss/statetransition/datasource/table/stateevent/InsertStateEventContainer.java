@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class InsertStateEventContainer {
     private final StateEventId eventId;
+    @Getter
     private final String id;
     @Getter
     private final StateType stateType;

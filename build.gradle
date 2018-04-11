@@ -9,9 +9,11 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url 'https://naosim.github.io/lib-term/' }
 }
 
 dependencies {
+    compile group:'com.naosim.ddd', name:'libterm', version:'0.3.0'
     compileOnly group: 'org.springframework', name: 'spring-context', version: '5.0.5.RELEASE'
     compileOnly group: 'org.mybatis', name: 'mybatis', version: '3.4.6'
     // https://mvnrepository.com/artifact/org.projectlombok/lombok

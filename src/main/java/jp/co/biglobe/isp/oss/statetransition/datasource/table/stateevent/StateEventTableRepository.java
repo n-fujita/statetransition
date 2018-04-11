@@ -5,6 +5,7 @@ import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventId;
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventList;
 import jp.co.biglobe.isp.oss.statetransition.domain.StateType;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface StateEventTableRepository {
@@ -21,6 +22,15 @@ public interface StateEventTableRepository {
      */
     StateEventList findAllEvent(
             FindContainer container
+    );
+
+    /**
+     * 状態に一致するイベントを取得する
+     * @param container
+     * @return
+     */
+    List<StateEvent> find(
+            FindByStateContainer container
     );
 
     void delete(StateEventId stateEventId, StateType stateType);

@@ -4,8 +4,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>jp.co.biglobe.isp.oss</groupId>
   <artifactId>statetransition</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <dependencies>
+    <dependency>
+      <groupId>com.naosim.ddd</groupId>
+      <artifactId>libterm</artifactId>
+      <version>0.3.0</version>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>

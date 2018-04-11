@@ -5,7 +5,6 @@ import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventId;
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventList;
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventTableNameFactory;
 import jp.co.biglobe.isp.oss.statetransition.datasource.db.StateEventMapper;
-import jp.co.biglobe.isp.oss.statetransition.datasource.table.StateEventAdapter;
 import jp.co.biglobe.isp.oss.statetransition.domain.StateType;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public class StateEventTableRepositoryImpl implements StateEventTableRepository 
                 .map(v -> v.toEntity(container.getStateType()));
     }
 
-    public List<StateEvent> find(FindByStateContainer container) {
+    public List<StateEvent> find(StateCustomSelectorContainer container) {
         return container
                 .getTermOptional()
                 .map(term -> term.mapIfOnlyStart(

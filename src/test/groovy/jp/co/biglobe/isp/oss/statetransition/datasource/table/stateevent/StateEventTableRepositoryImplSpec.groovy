@@ -128,7 +128,7 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
         })
 
         when:
-        def act = sut.find(new FindByStateContainer(
+        def act = sut.find(new StateCustomSelectorContainer(
                 SampleStateType.contract,
                 term(startMonth, endMonth),
                 states as State[]

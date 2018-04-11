@@ -1,9 +1,7 @@
 package jp.co.biglobe.isp.oss.statetransition.datasource.db;
 
-import com.naosim.ddd.term.Term;
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventId;
 import jp.co.biglobe.isp.oss.statetransition.datasource.table.StateEventAdapter;
-import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.FindByStateContainer;
 import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.FindContainer;
 import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.InsertStateEventContainer;
 import jp.co.biglobe.isp.oss.statetransition.domain.StateType;
@@ -28,14 +26,14 @@ public interface StateEventMapper {
             @Param("c") FindContainer c
     );
 
-    @Select("SELECT * FROM ${tableName} WHERE state_type = #{stateType.value} AND is_latest = 1 ${extra}")
+    @Select("SELECT * FROM ${tableName} WHERE state_type = #{stateType.value} AND is_latest = 1 ${extra} ORDER BY id")
     List<StateEventAdapter> findAllLatestByState(
             @Param("tableName") String tableName,
             @Param("stateType") StateType stateType,
             @Param("extra") String extra
     );
 
-    @Select("SELECT * FROM ${tableName} WHERE state_type = #{stateType.value} AND is_latest = 1 AND #{fromDateTime} <= state_event_date_time ${extra}")
+    @Select("SELECT * FROM ${tableName} WHERE state_type = #{stateType.value} AND is_latest = 1 AND #{fromDateTime} <= state_event_date_time ${extra} ORDER BY id")
     List<StateEventAdapter> findAllLatestByStateFromDateTime(
             @Param("tableName") String tableName,
             @Param("stateType") StateType stateType,
@@ -43,7 +41,7 @@ public interface StateEventMapper {
             @Param("extra") String extra
     );
 
-    @Select("SELECT * FROM ${tableName} WHERE state_type = #{stateType.value} AND is_latest = 1 AND #{fromDateTime} <= state_event_date_time AND state_event_date_time < #{toDateTime} ${extra}")
+    @Select("SELECT * FROM ${tableName} WHERE state_type = #{stateType.value} AND is_latest = 1 AND #{fromDateTime} <= state_event_date_time AND state_event_date_time < #{toDateTime} ${extra} ORDER BY id")
     List<StateEventAdapter> findAllLatestByStateFromAndToDateTime(
             @Param("tableName") String tableName,
             @Param("stateType") StateType stateType,

@@ -30,7 +30,7 @@ public interface StateEventTableRepository {
      * @return
      */
     List<StateEvent> find(
-            FindByStateContainer container
+            StateCustomSelectorContainer container
     );
 
     void delete(StateEventId stateEventId, StateType stateType);

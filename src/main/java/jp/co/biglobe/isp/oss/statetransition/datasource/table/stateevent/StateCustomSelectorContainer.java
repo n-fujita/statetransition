@@ -15,14 +15,14 @@ import java.util.stream.Stream;
 /**
  * 検索条件: 状態, 期間
  */
-public class FindByStateContainer {
+public class StateCustomSelectorContainer {
     private final StateType stateType;
     @Getter
     private final Optional<Term<LocalDateTimeVO, LocalDateTimeVO>> termOptional;
     private final List<State> targetStateList;
 
 
-    public FindByStateContainer(
+    public StateCustomSelectorContainer(
             StateType stateType,
             Optional<Term<LocalDateTimeVO, LocalDateTimeVO>> termOptional,
             State... targetStates
@@ -32,7 +32,7 @@ public class FindByStateContainer {
         this.targetStateList = Stream.of(targetStates).collect(Collectors.toList());
     }
 
-    public FindByStateContainer(
+    public StateCustomSelectorContainer(
             StateType stateType,
             State... targetStates
     ) {

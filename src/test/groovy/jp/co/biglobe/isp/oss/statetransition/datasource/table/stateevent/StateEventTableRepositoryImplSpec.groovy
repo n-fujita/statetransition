@@ -108,13 +108,7 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
 
     }
 
-    // 1つの状態検索
-    // 複数の状態検索
-    // 期間付きの検索
-    // 期間開始だけの検索
-    // 全部入り
-
-    def "test"() {
+    def "find"() {
         setup:
         def builder1 = 申込("EVENT01").id("ID001").stateEventDateTime(2018, 1, 1)
         def builder2 = 申込("EVENT02").id("ID002").stateEventDateTime(2018, 2, 1)

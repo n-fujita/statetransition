@@ -10,27 +10,15 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
-public class InsertStateEventContainer {
-    private final StateEventId eventId;
+public class InsertStateEvent {
     @Getter
     private final String id;
     @Getter
     private final StateType stateType;
+    @Getter
     private final State state;
+    @Getter
     private final StateEventDateTime stateEventDateTime;
+    @Getter
     private final LocalDateTime now;
-
-    public InsertStateEventContainer(
-            StateEventId eventId,
-            InsertStateEvent insertStateEvent
-    ) {
-        this.eventId = eventId;
-        this.id = insertStateEvent.getId();
-        this.stateType = insertStateEvent.getStateType();
-        this.state = insertStateEvent.getState();
-        this.stateEventDateTime = insertStateEvent.getStateEventDateTime();
-        this.now = insertStateEvent.getNow();
-
-
-    }
 }

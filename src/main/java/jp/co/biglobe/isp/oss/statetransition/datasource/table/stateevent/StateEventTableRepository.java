@@ -2,6 +2,7 @@ package jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent;
 
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEvent;
 import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventId;
+import jp.co.biglobe.isp.oss.statetransition.datasource.StateEventList;
 import jp.co.biglobe.isp.oss.statetransition.domain.StateType;
 
 import java.util.List;
@@ -12,18 +13,29 @@ public interface StateEventTableRepository {
             InsertStateEventContainer insertStateEventContainer
     );
 
-    Optional<StateEvent> find(FindLatestContainer container);
+    Optional<StateEvent> findAllLatestEvent(FindContainer container);
 
     /**
      * すべてのイベントをIDの昇順で取得する
      * @param container
      * @return
      */
-    List<StateEvent> findAllEvent(
-            FindLatestContainer container
+    StateEventList findAllEvent(
+            FindContainer container
+    );
+
+    /**
+     * 状態に一致するイベントを取得する
+     * @param container
+     * @return
+     */
+    List<StateEvent> findAllLatestEvent(
+            StateCustomSelectorContainer container
     );
 
     void delete(StateEventId stateEventId, StateType stateType);
 
-    void refreshLatest(FindLatestContainer container);
+    void refreshLatest(FindContainer container);
+
+    void validate(FindContainer container);
 }

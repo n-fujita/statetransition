@@ -42,7 +42,7 @@ uploadArchives {
     repositories {
         mavenDeployer {
             repository url: "file://${rootDir}/docs"
-            pom.version = '0.1.0'
+            pom.version = '0.2.0'
             pom.groupId = 'jp.co.biglobe.isp.oss'
             pom.artifactId = 'statetransition'
         }

@@ -24,6 +24,16 @@ public class StateCustomSelectorContainer {
 
     public StateCustomSelectorContainer(
             StateType stateType,
+            Term<LocalDateTimeVO, LocalDateTimeVO> term,
+            State... targetStates
+    ) {
+        this.stateType = stateType;
+        this.termOptional = Optional.of(term);
+        this.targetStateList = Stream.of(targetStates).collect(Collectors.toList());
+    }
+
+    public StateCustomSelectorContainer(
+            StateType stateType,
             Optional<Term<LocalDateTimeVO, LocalDateTimeVO>> termOptional,
             State... targetStates
     ) {

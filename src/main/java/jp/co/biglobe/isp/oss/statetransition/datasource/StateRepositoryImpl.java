@@ -1,14 +1,13 @@
 package jp.co.biglobe.isp.oss.statetransition.datasource;
 
+import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.*;
 import jp.co.biglobe.isp.oss.statetransition.domain.*;
-import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.FindContainer;
-import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.InsertStateEventContainer;
-import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.StateEventTableRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -18,56 +17,41 @@ public class StateRepositoryImpl implements StateRepository {
     private final StateEventIdFactory stateEventIdFactory;
 
     @Override
-    public void upsert(
-            String id,
-            StateType stateType,
-            State state,
-            StateEventDateTime stateEventDateTime,
-            LocalDateTime now
-    ) {
+    public void upsert(InsertStateEvent insertStateEvent) {
 
         Optional<StateAndStateEventDateTime> latest = stateEventTableRepository
-                .findAllLatestEvent(new FindContainer(id, stateType))
+                .findAllLatestEvent(new FindContainer(insertStateEvent.getId(), insertStateEvent.getStateType()))
                 .map(StateEvent::toStateAndStateEventDateTime);
 
         StateChangeLogic.validate(
                 latest,
-                new StateAndStateEventDateTime(stateType, state, stateEventDateTime)
+                new StateAndStateEventDateTime(insertStateEvent.getStateType(), insertStateEvent.getState(), insertStateEvent.getStateEventDateTime())
         ).ifPresent(v -> { throw v; });
 
-        insertEvent(id, stateType, state, stateEventDateTime, now);
+        insertEvent(insertStateEvent);
     }
 
-    void insertEvent(String id, StateType stateType, State state, StateEventDateTime stateEventDateTime, LocalDateTime now) {
-        StateEventId eventId = stateEventIdFactory.createStateEventId(stateType);
+    void insertEvent(InsertStateEvent insertStateEvent) {
+        StateEventId eventId = stateEventIdFactory.createStateEventId(insertStateEvent.getStateType());
         // insert to event table
         stateEventTableRepository.insertStateEvent(
                 new InsertStateEventContainer(
                         eventId,
-                        id,
-                        stateType,
-                        state,
-                        stateEventDateTime,
-                        now
+                        insertStateEvent
                 )
         );
 
-        applyStateFromLatestEvent(id, stateType, now);
-    }
-
-    /**
-     * イベントの最新の状態でstateを作成する
-     * @param id
-     * @param stateType
-     * @param now
-     */
-    void applyStateFromLatestEvent(String id, StateType stateType, LocalDateTime now) {
-        stateEventTableRepository.refreshLatest(new FindContainer(id, stateType));
+        stateEventTableRepository.refreshLatest(new FindContainer(insertStateEvent.getId(), insertStateEvent.getStateType()));
     }
 
     @Override
     public Optional<StateEvent> findLatest(String id, StateType stateType) {
         return stateEventTableRepository.findAllLatestEvent(new FindContainer(id, stateType));
+    }
+
+    @Override
+    public List<StateEvent> findAllLatest(StateCustomSelectorContainer stateCustomSelectorContainer) {
+        return stateEventTableRepository.findAllLatestEvent(stateCustomSelectorContainer);
     }
 
     public void delete(StateEventId stateEventId, String id, StateType stateType, LocalDateTime now) {
@@ -80,6 +64,6 @@ public class StateRepositoryImpl implements StateRepository {
         stateEventTableRepository.delete(stateEventId, stateType);
 
         // update state table
-        applyStateFromLatestEvent(id, stateType, now);
+        stateEventTableRepository.refreshLatest(new FindContainer(id, stateType));
     }
 }

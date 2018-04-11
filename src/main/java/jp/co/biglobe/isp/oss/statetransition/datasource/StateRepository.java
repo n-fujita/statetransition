@@ -1,10 +1,10 @@
 package jp.co.biglobe.isp.oss.statetransition.datasource;
 
-import jp.co.biglobe.isp.oss.statetransition.domain.State;
-import jp.co.biglobe.isp.oss.statetransition.domain.StateEventDateTime;
+import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.InsertStateEvent;
+import jp.co.biglobe.isp.oss.statetransition.datasource.table.stateevent.StateCustomSelectorContainer;
 import jp.co.biglobe.isp.oss.statetransition.domain.StateType;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -12,13 +12,7 @@ import java.util.Optional;
  *
  */
 public interface StateRepository {
-    void upsert(
-            String id,
-            StateType stateType,
-            State state,
-            StateEventDateTime stateEventDateTime,
-            LocalDateTime now
-    );
-
+    void upsert(InsertStateEvent insertStateEvent);
     Optional<StateEvent> findLatest(String id, StateType stateType);
+    List<StateEvent> findAllLatest(StateCustomSelectorContainer stateCustomSelectorContainer);
 }

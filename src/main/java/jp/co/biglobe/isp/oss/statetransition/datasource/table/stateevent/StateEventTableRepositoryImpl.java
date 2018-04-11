@@ -30,12 +30,12 @@ public class StateEventTableRepositoryImpl implements StateEventTableRepository 
     }
 
     @Override
-    public Optional<StateEvent> find(FindContainer container) {
+    public Optional<StateEvent> findAllLatestEvent(FindContainer container) {
         return Optional.ofNullable(stateEventMapper.findLatest(stateEventTableNameFactory.createStateEventTableName(container.getStateType()), container))
                 .map(v -> v.toEntity(container.getStateType()));
     }
 
-    public List<StateEvent> find(StateCustomSelectorContainer container) {
+    public List<StateEvent> findAllLatestEvent(StateCustomSelectorContainer container) {
         return container
                 .getTermOptional()
                 .map(term -> term.mapIfOnlyStart(

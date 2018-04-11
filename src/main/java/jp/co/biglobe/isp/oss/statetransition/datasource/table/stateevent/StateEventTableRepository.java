@@ -13,7 +13,7 @@ public interface StateEventTableRepository {
             InsertStateEventContainer insertStateEventContainer
     );
 
-    Optional<StateEvent> find(FindContainer container);
+    Optional<StateEvent> findAllLatestEvent(FindContainer container);
 
     /**
      * すべてのイベントをIDの昇順で取得する
@@ -29,7 +29,7 @@ public interface StateEventTableRepository {
      * @param container
      * @return
      */
-    List<StateEvent> find(
+    List<StateEvent> findAllLatestEvent(
             StateCustomSelectorContainer container
     );
 

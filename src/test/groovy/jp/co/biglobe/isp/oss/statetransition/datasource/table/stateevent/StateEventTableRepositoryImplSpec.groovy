@@ -92,7 +92,7 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
         sut.insertStateEvent(申込Container)
         sut.refreshLatest(new FindContainer("ID001", SampleStateType.contract))
         sut.validate(find)
-        assert sut.find(find).get().state == contracted
+        assert sut.findAllLatestEvent(find).get().state == contracted
 
         // 解約のイベントを入れる
         def 解約Container = 解約().stateEventDateTime(2018, 4, 1).eventDateTime(2018, 5, 1).build()
@@ -104,11 +104,11 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
 
         then:
         notThrown(RuntimeException)
-        sut.find(find).get().state == ContractState.end // 解約になっていること
+        sut.findAllLatestEvent(find).get().state == ContractState.end // 解約になっていること
 
     }
 
-    def "find"() {
+    def "findAllLatestEvent"() {
         setup:
         def builder1 = 申込("EVENT01").id("ID001").stateEventDateTime(2018, 1, 1)
         def builder2 = 申込("EVENT02").id("ID002").stateEventDateTime(2018, 2, 1)
@@ -122,7 +122,7 @@ class StateEventTableRepositoryImplSpec extends DbSpecCommon {
         })
 
         when:
-        def act = sut.find(new StateCustomSelectorContainer(
+        def act = sut.findAllLatestEvent(new StateCustomSelectorContainer(
                 SampleStateType.contract,
                 term(startMonth, endMonth),
                 states as State[]

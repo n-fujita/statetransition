@@ -27,7 +27,7 @@ public class StateRepositoryImpl implements StateRepository {
     ) {
 
         Optional<StateAndStateEventDateTime> latest = stateEventTableRepository
-                .find(new FindContainer(id, stateType))
+                .findAllLatestEvent(new FindContainer(id, stateType))
                 .map(StateEvent::toStateAndStateEventDateTime);
 
         StateChangeLogic.validate(
@@ -67,11 +67,11 @@ public class StateRepositoryImpl implements StateRepository {
 
     @Override
     public Optional<StateEvent> findLatest(String id, StateType stateType) {
-        return stateEventTableRepository.find(new FindContainer(id, stateType));
+        return stateEventTableRepository.findAllLatestEvent(new FindContainer(id, stateType));
     }
 
     public void delete(StateEventId stateEventId, String id, StateType stateType, LocalDateTime now) {
-        StateEvent latest = stateEventTableRepository.find(new FindContainer(id, stateType)).orElseThrow(() -> new RuntimeException("stateEventIdが見つからない: " + stateEventId.getValue()));
+        StateEvent latest = stateEventTableRepository.findAllLatestEvent(new FindContainer(id, stateType)).orElseThrow(() -> new RuntimeException("stateEventIdが見つからない: " + stateEventId.getValue()));
         if(!latest.getEventId().getValue().equals(stateEventId.getValue())) {
             throw new RuntimeException("最新のイベント以外削除できません");
         }

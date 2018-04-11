@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,9 +30,40 @@ public class StateEventTableRepositoryImpl implements StateEventTableRepository 
     }
 
     @Override
-    public Optional<StateEvent> find(FindContainer container) {
+    public Optional<StateEvent> findAllLatestEvent(FindContainer container) {
         return Optional.ofNullable(stateEventMapper.findLatest(stateEventTableNameFactory.createStateEventTableName(container.getStateType()), container))
                 .map(v -> v.toEntity(container.getStateType()));
+    }
+
+    public List<StateEvent> findAllLatestEvent(StateCustomSelectorContainer container) {
+        return container
+                .getTermOptional()
+                .map(term -> term.mapIfOnlyStart(
+                        // 期間指定で開始日のみある場合
+                        t -> stateEventMapper.findAllLatestByStateFromDateTime(
+                                stateEventTableNameFactory.createStateEventTableName(container.getStateType()),
+                                container.getStateType(),
+                                t.getStartDateTime().getValue(),
+                                container.getStateScript()
+                        ),
+                        // 期間指定で開始日と終了日がある場合
+                        t -> stateEventMapper.findAllLatestByStateFromAndToDateTime(
+                                stateEventTableNameFactory.createStateEventTableName(container.getStateType()),
+                                container.getStateType(),
+                                t.getStartDateTime().getValue(),
+                                t.getEndDateTime().getValue(),
+                                container.getStateScript()
+                        )
+                ))
+                // 期間指定がない場合
+                .orElseGet(() -> stateEventMapper.findAllLatestByState(
+                        stateEventTableNameFactory.createStateEventTableName(container.getStateType()),
+                        container.getStateType(),
+                        container.getStateScript()
+                ))
+                .stream()
+                .map(v -> v.toEntity(container.getStateType()))
+                .collect(Collectors.toList());
     }
 
     public StateEventList findAllEvent(

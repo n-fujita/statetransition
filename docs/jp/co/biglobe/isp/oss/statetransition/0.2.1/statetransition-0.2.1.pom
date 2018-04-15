@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>jp.co.biglobe.isp.oss</groupId>
   <artifactId>statetransition</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
   <dependencies>
     <dependency>
       <groupId>com.naosim.ddd</groupId>
